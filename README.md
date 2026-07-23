@@ -26,3 +26,7 @@ python -m build
 ```
 
 Version 1.0.0 is feature complete for line-oriented prompt review. Contributions follow [CONTRIBUTING.md](CONTRIBUTING.md), security reports follow [SECURITY.md](SECURITY.md), and the project uses the MIT License.
+
+## More open-source projects
+
+This project is part of the [Logan Pendragon Forge open-source collection](https://www.loganpendragonforge.com/open-source/). Browse the catalog for other released tools, source repositories, live demos, and downloads.
