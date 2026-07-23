@@ -1,0 +1,13 @@
+name: Feature request
+description: Propose a focused prompt-diff improvement
+title: "[Feature] "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes: { label: Problem, description: Which review workflow is unsupported? }
+    validations: { required: true }
+  - type: textarea
+    id: transparency
+    attributes: { label: Deterministic behavior, description: Explain visible cues and false-positive boundaries. }
+    validations: { required: true }
