@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.1.0 - Unreleased
+## 1.1.0 - 2026-10-15
 
 - Add opt-in `--context N` and Python API context windows with original line numbers and categories.
 - Merge neighboring windows while preserving default output and meaningful-line counts.
