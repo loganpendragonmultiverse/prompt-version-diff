@@ -5,7 +5,7 @@ Prompt Version Diff compares two local prompt files and groups added and removed
 ## Three-minute use
 
 ```sh
-python -m pip install "prompt-version-diff @ https://github.com/loganpendragonmultiverse/prompt-version-diff/releases/download/v1.0.0/prompt_version_diff-1.0.0-py3-none-any.whl"
+python -m pip install .
 prompt-version-diff prompt-old.md prompt-new.md --markdown changes.md --json changes.json
 ```
 
@@ -25,8 +25,12 @@ pytest
 python -m build
 ```
 
-Version 1.0.0 is feature complete for line-oriented prompt review. Contributions follow [CONTRIBUTING.md](CONTRIBUTING.md), security reports follow [SECURITY.md](SECURITY.md), and the project uses the MIT License.
+The original release is feature complete for line-oriented prompt review. Contributions follow [CONTRIBUTING.md](CONTRIBUTING.md), security reports follow [SECURITY.md](SECURITY.md), and the project uses the MIT License.
 
 ## More open-source projects
 
 This project is part of the [Logan Pendragon Forge open-source collection](https://www.loganpendragonforge.com/open-source/). Browse the catalog for other released tools, source repositories, live demos, and downloads.
+
+## Optional context windows
+
+Use `--context N` (or `compare_text(before, after, context=N)`) to include N neighboring nonblank lines on each side of a change. Adjacent windows merge; distant changes stay separate. Context records retain original physical line numbers and lexical categories. Blank lines and CRLF differences remain ignored, matching the existing comparison. The default `--context 0` preserves the original JSON keys and Markdown output; positive context adds `hunks` with `before` and `after` records. Added/removed totals and exit codes still count changes only.

@@ -26,6 +26,14 @@ def markdown(result: PromptDiff) -> str:
                 lines.extend([f"### {category.title()}", ""])
                 lines.extend(f"- `{marker}{item.line}` {item.text}" for item in matching)
                 lines.append("")
+    if result.hunks is not None:
+        lines.extend(["", "## Context windows", ""])
+        for number, hunk in enumerate(result.hunks, 1):
+            lines.extend([f"### Hunk {number}", ""])
+            for side, items in (("Before", hunk.before), ("After", hunk.after)):
+                lines.extend([f"#### {side}", ""])
+                lines.extend(f"- `{item.line}` [{item.category}] {item.text}" for item in items)
+                lines.append("")
     return "\n".join(lines).rstrip() + "\n"
 
 
@@ -38,6 +46,13 @@ def parser() -> argparse.ArgumentParser:
     result.add_argument("after", type=Path)
     result.add_argument("--json", type=Path, dest="json_output")
     result.add_argument("--markdown", type=Path, dest="markdown_output")
+    result.add_argument(
+        "--context",
+        type=int,
+        default=0,
+        metavar="N",
+        help="include N neighboring nonblank lines around each change",
+    )
     return result
 
 
@@ -48,8 +63,9 @@ def main(argv: list[str] | None = None) -> int:
         result = compare_text(
             args.before.read_text(encoding="utf-8-sig"),
             args.after.read_text(encoding="utf-8-sig"),
+            context=args.context,
         )
-    except OSError as error:
+    except (OSError, ValueError) as error:
         parser().error(str(error))
     rendered = markdown(result)
     if args.json_output:

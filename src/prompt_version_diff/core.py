@@ -19,16 +19,28 @@ class ChangedLine:
 
 
 @dataclass(frozen=True)
+class ContextHunk:
+    """A group of changes with neighboring nonblank lines on each side."""
+
+    before: tuple[ChangedLine, ...]
+    after: tuple[ChangedLine, ...]
+
+
+@dataclass(frozen=True)
 class PromptDiff:
     """Complete prompt comparison."""
 
     added: tuple[ChangedLine, ...]
     removed: tuple[ChangedLine, ...]
     unchanged_lines: int
+    hunks: tuple[ContextHunk, ...] | None = None
 
     def to_dict(self) -> dict[str, object]:
         """Return a JSON-ready representation."""
-        return asdict(self)
+        result = asdict(self)
+        if self.hunks is None:
+            del result["hunks"]
+        return result
 
 
 def categorize(text: str) -> Category:
@@ -72,8 +84,10 @@ def changed(items: list[tuple[int, str]], indexes: range) -> list[ChangedLine]:
     ]
 
 
-def compare_text(before: str, after: str) -> PromptDiff:
+def compare_text(before: str, after: str, *, context: int = 0) -> PromptDiff:
     """Compare two prompts by nonblank line sequence."""
+    if isinstance(context, bool) or not isinstance(context, int) or context < 0:
+        raise ValueError("context must be a nonnegative integer")
     old = meaningful_lines(before)
     new = meaningful_lines(after)
     matcher = difflib.SequenceMatcher(
@@ -89,4 +103,13 @@ def compare_text(before: str, after: str) -> PromptDiff:
             removed.extend(changed(old, range(old_start, old_end)))
         if tag in {"insert", "replace"}:
             added.extend(changed(new, range(new_start, new_end)))
-    return PromptDiff(tuple(added), tuple(removed), unchanged)
+    hunks = None
+    if context:
+        hunks = tuple(
+            ContextHunk(
+                tuple(changed(old, range(group[0][1], group[-1][2]))),
+                tuple(changed(new, range(group[0][3], group[-1][4]))),
+            )
+            for group in matcher.get_grouped_opcodes(context)
+        )
+    return PromptDiff(tuple(added), tuple(removed), unchanged, hunks)
