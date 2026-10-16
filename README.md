@@ -2,6 +2,10 @@
 
 Prompt Version Diff compares two local prompt files and groups added and removed nonblank lines into visible categories: constraints, context, examples, and instructions. It uses documented deterministic cues—never an AI model—so every classification is reproducible and reviewable.
 
+## Version 1.1.1
+
+This documentation correction updates release wording and packaged release history. Library behavior is unchanged from version 1.1.0.
+
 ## Three-minute use
 
 ```sh
