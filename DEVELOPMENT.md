@@ -8,3 +8,7 @@ Add opt-in `--context N` and Python API context windows with original line numbe
 
 See README.md for interface details and TESTING.md for the verification gate.
 Published on GitHub after independent review and passing PR, main, and tag checks.
+
+## 1.1.1 - 2026-10-16
+
+Documentation and version declarations only. Library implementation and tests are unchanged from 1.1.0.
