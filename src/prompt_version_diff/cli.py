@@ -3,10 +3,14 @@
 from __future__ import annotations
 
 import argparse
+import io
 import json
+import os
+import sys
 from pathlib import Path
 
 from prompt_version_diff.core import PromptDiff, compare_text
+from prompt_version_diff.output import write_reports
 
 
 def markdown(result: PromptDiff) -> str:
@@ -56,6 +60,24 @@ def parser() -> argparse.ArgumentParser:
     return result
 
 
+def _write_stdout(rendered: str) -> None:
+    # Write real terminal/pipe descriptors directly: a failed buffered flush would
+    # otherwise be retried at interpreter shutdown and replace status 2 with 120.
+    try:
+        fd = sys.stdout.fileno()
+    except (AttributeError, io.UnsupportedOperation):
+        sys.stdout.write(rendered)
+        sys.stdout.flush()
+        return
+    data = rendered.encode(sys.stdout.encoding or "utf-8", sys.stdout.errors or "strict")
+    sent = 0
+    while sent < len(data):
+        count = os.write(fd, data[sent : sent + 65536])
+        if count <= 0:
+            raise OSError("terminal write made no progress")
+        sent += count
+
+
 def main(argv: list[str] | None = None) -> int:
     """Run the command."""
     args = parser().parse_args(argv)
@@ -65,12 +87,17 @@ def main(argv: list[str] | None = None) -> int:
             args.after.read_text(encoding="utf-8-sig"),
             context=args.context,
         )
+        rendered = markdown(result)
+        outputs = []
+        if args.json_output:
+            outputs.append((args.json_output, json.dumps(result.to_dict(), indent=2) + "\n"))
+        if args.markdown_output:
+            outputs.append((args.markdown_output, rendered))
+
+        def deliver() -> None:
+            _write_stdout(rendered)
+
+        write_reports(outputs, deliver)
     except (OSError, ValueError) as error:
         parser().error(str(error))
-    rendered = markdown(result)
-    if args.json_output:
-        args.json_output.write_text(json.dumps(result.to_dict(), indent=2) + "\n", encoding="utf-8")
-    if args.markdown_output:
-        args.markdown_output.write_text(rendered, encoding="utf-8")
-    print(rendered, end="")
     return 1 if result.added or result.removed else 0

@@ -12,3 +12,7 @@ Published on GitHub after independent review and passing PR, main, and tag check
 ## 1.1.1 - 2026-10-16
 
 Documentation and version declarations only. Library implementation and tests are unchanged from 1.1.0.
+
+## 1.1.2 - Unreleased
+
+Protect inputs and existing reports with distinct new output paths and exclusive creation. Render all data before reserving names, reserve both before writing, and recover only unchanged new reports owned by a failed invocation. Keep comparison semantics unchanged. Do not claim multi-file crash/power-loss atomicity.
