@@ -2,9 +2,9 @@
 
 Prompt Version Diff compares two local prompt files and groups added and removed nonblank lines into visible categories: constraints, context, examples, and instructions. It uses documented deterministic cues—never an AI model—so every classification is reproducible and reviewable.
 
-## Prepared changes for 1.1.2
+## Version 1.1.2 — 2026-10-18
 
-Pending review and release: create reports only at new, distinct destinations. Existing inputs and reports are never overwritten; ordinary report-write failures recover unchanged new reports created by that invocation. Comparison and categorization behavior is unchanged.
+Create reports only at new, distinct destinations. Existing inputs and reports are never overwritten; ordinary report-write failures recover unchanged new reports created by that invocation. Comparison and categorization behavior is unchanged.
 
 ## Three-minute use
 
