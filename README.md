@@ -2,9 +2,9 @@
 
 Prompt Version Diff compares two local prompt files and groups added and removed nonblank lines into visible categories: constraints, context, examples, and instructions. It uses documented deterministic cues—never an AI model—so every classification is reproducible and reviewable.
 
-## Version 1.1.1
+## Version 1.1.2 — 2026-10-18
 
-This documentation correction updates release wording and packaged release history. Library behavior is unchanged from version 1.1.0.
+Create reports only at new, distinct destinations. Existing inputs and reports are never overwritten; ordinary report-write failures recover unchanged new reports created by that invocation. Comparison and categorization behavior is unchanged.
 
 ## Three-minute use
 
@@ -13,7 +13,9 @@ python -m pip install .
 prompt-version-diff prompt-old.md prompt-new.md --markdown changes.md --json changes.json
 ```
 
-The exit code is `1` when meaningful lines changed, `0` when they match, and `2` for unreadable input. Blank-line-only formatting changes are ignored.
+The exit code is `1` when meaningful lines changed, `0` when they match, and `2` for invalid input or report/terminal output errors. Blank-line-only formatting changes are ignored.
+
+Report directories must already exist. Both destinations are checked and exclusively reserved before either report is written. If an ordinary write or terminal-output failure occurs, unchanged reports created by that invocation are removed so you can correct the destination and retry. Existing files are preserved. Recovery checks new reports’ identity and contents and names paths it cannot safely recover. Abrupt process termination and power-loss atomicity across files are not promised, and text already read from stdout cannot be recalled.
 
 ## Privacy and limitations
 

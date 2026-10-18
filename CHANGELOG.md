@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.2 - 2026-10-18
+
+- Refuse existing, source-alias and duplicate report destinations without changing either input.
+- Reserve both report names exclusively and recover unchanged new reports after ordinary write or stdout failures.
+- Return actionable status 2 for output errors instead of a traceback; keep lexical comparison behavior unchanged.
+
 ## 1.1.1 - 2026-10-16
 
 - Correct release wording and include dated release history and development notes in source distributions.
