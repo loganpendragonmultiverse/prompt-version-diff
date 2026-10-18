@@ -59,6 +59,11 @@ def test_symlink_and_hardlink_inputs_preserved(tmp_path: Path) -> None:
     with pytest.raises(SystemExit):
         main([str(before), str(after), "--json", str(alias)])
     assert before.read_bytes() == b"Old prompt\r\n" and alias.is_symlink()
+    cycle = tmp_path / "cycle.json"
+    cycle.symlink_to(cycle)
+    with pytest.raises(SystemExit) as exc:
+        main([str(before), str(after), "--json", str(cycle)])
+    assert exc.value.code == 2 and cycle.is_symlink()
     hardlink = tmp_path / "hardlink.json"
     os.link(after, hardlink)
     with pytest.raises(SystemExit):

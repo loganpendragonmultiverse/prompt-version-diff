@@ -59,13 +59,13 @@ def write_reports(outputs: list[tuple[Path, str]], deliver: Callable[[], None]) 
     This is not an atomic transaction across a process crash or power loss.
     """
     paths = [path for path, _ in outputs]
-    if len({path.resolve() for path in paths}) != len(paths):
-        raise ValueError("report destinations must be distinct new files")
     for path in paths:
         if os.path.lexists(path):
             raise ValueError(f"report already exists: {path}; choose a new destination")
         if not path.parent.is_dir():
             raise ValueError(f"report directory does not exist: {path.parent}")
+    if len({path.resolve() for path in paths}) != len(paths):
+        raise ValueError("report destinations must be distinct new files")
     reports = [_Report(path, text.encode("utf-8")) for path, text in outputs]
     try:
         # Exclusive creation also rejects a file/symlink appearing after validation.
